@@ -1,8 +1,8 @@
-# ME 345 Blackjack Martingale Tester
+# ME 345 Blackjack Martingale Simulator
 
 MATLAB blackjack simulator with:
 - UI mode (`bj_ui`)
-- Headless test mode (`martingale_strategy_tester` / `bj_run_martingale_test`)
+- Headless mode (`martingale_strategy_tester` / `bj_run_martingale_test`)
 
 ## 1. Open project
 
@@ -12,28 +12,21 @@ MATLAB blackjack simulator with:
 bj_ui
 ```
 
-## 3. Run headless tester (default params)
-```matlab
-[state, summary] = martingale_strategy_tester(5000);
-disp(summary)
-```
+## 3. Parameter reference
+- `numDecks`: Number of decks in the shoe.
+- `bankroll0`: Starting bankroll.
+- `tableMin`: Table minimum bet.
+- `tableMax`: Table maximum bet.
+- `baseBet`: Martingale base/reset bet.
+- `bjPayout`: Blackjack payout multiplier (typically `1.5`).
+- `dealerStandS17`: `true` for dealer stands on soft 17; `false` hits soft 17.
+- `allowDouble`: Enables/disables player double-down logic.
+- `reshufflePen`: Fraction of original shoe size that triggers reshuffle.
+- `stopAtTableMax`: `true` stops the run when the next required bet reaches `tableMax`; `false` keeps playing at the cap.
+- `seed`: RNG seed for reproducible runs.
+  - Use `[]` for random runs each start/reset.
 
-`summary` includes:
-- `handsPlayed`
-- `bankrollStart`
-- `bankrollEnd`
-- `net`
-- `roi`
-- `wins`
-- `losses`
-- `pushes`
-- `winRateNoPush`
-- `lossRateNoPush`
-- `stoppedByBankroll`
-- `stopLossesInRow`
-- `maxLossStreak`
-
-## 4. Run with custom params
+## 4. Run headless
 ```matlab
 props = struct( ...
   'numDecks', 6, ...
@@ -45,6 +38,7 @@ props = struct( ...
   'dealerStandS17', true, ...
   'allowDouble', false, ...
   'reshufflePen', 0.25, ...
+  'stopAtTableMax', false, ...
   'seed', 42 ...
 );
 
@@ -52,33 +46,14 @@ props = struct( ...
 disp(summary)
 ```
 
-You can also pass a partial struct; missing fields use defaults:
-```matlab
-props = struct('bankroll0', 5000, 'baseBet', 50, 'seed', 99);
-[state, summary] = martingale_strategy_tester(20000, props);
-```
-
-## 5. Parameter reference
-- `numDecks`: Number of decks in the shoe.
-- `bankroll0`: Starting bankroll.
-- `tableMin`: Table minimum bet.
-- `tableMax`: Table maximum bet.
-- `baseBet`: Martingale base/reset bet.
-- `bjPayout`: Blackjack payout multiplier (typically `1.5`).
-- `dealerStandS17`: `true` for dealer stands on soft 17; `false` hits soft 17.
-- `allowDouble`: Enables/disables player double-down logic.
-- `reshufflePen`: Fraction of original shoe size that triggers reshuffle.
-- `seed`: RNG seed for reproducible runs.
-  - Use `[]` for random runs each start/reset.
-
-## 6. Notes
+## 5. Notes
 - Entry points auto-call `bj_setup_paths`, so subfolders are loaded automatically.
 - Main entry points:
   - `bj_ui`
   - `bj_run_martingale_test`
   - `martingale_strategy_tester`
 
-## 7. Realism scope
+## 6. Realism scope
 Current model matches core blackjack flow (shoe dealing, naturals, S17/H17, doubling, bankroll settlement), but it is not a full casino rules engine yet.
 
 Not yet modeled:
@@ -87,5 +62,3 @@ Not yet modeled:
 - Insurance / even money
 - Side bets
 - Table-specific double restrictions beyond current toggle
-# ME-345-Martingale
-# ME-345-Martingale

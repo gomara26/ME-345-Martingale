@@ -1,5 +1,5 @@
 function [state,summary] = martingale_strategy_tester(numHands,props)
-% Convenience wrapper around bj_run_martingale_test for strategy testing.
+% Convenience wrapper around bj_run_martingale_test.
 bj_setup_paths();
 if nargin < 1
   numHands = [];

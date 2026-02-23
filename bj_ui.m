@@ -11,6 +11,7 @@ props = struct( ...
   'dealerStandS17', true, ...
   'allowDouble', false, ...
   'reshufflePen', 0.25, ...
+  'stopAtTableMax', false, ...
   'seed', [] ...
 );
 
@@ -176,7 +177,11 @@ render();
       pLoss,maxLoss,pStreak);
 
     if state.stop.hit
-      lblStop.Text = sprintf('STOPPED after %d consecutive losses',state.stop.lossesInRow);
+      if isfield(state.stop,'reason') && state.stop.reason == "TABLE_MAX"
+        lblStop.Text = sprintf('STOPPED at table max (next bet $%.0f)',state.stop.nextBet);
+      else
+        lblStop.Text = sprintf('STOPPED after %d consecutive losses',state.stop.lossesInRow);
+      end
       lblStop.FontColor = [0.76 0.17 0.15];
       btnDeal.Enable = 'off';
       btnAuto.Enable = 'off';
@@ -203,15 +208,32 @@ render();
     if ~isempty(state.history.bankroll)
       x = 1:numel(state.history.bankroll);
       y = state.history.bankroll;
-      area(ax,x,y,'FaceColor',[0.86 0.93 1.00],'EdgeColor','none');
-      plot(ax,x,y,'-o', ...
+      a = area(ax,x,y,'FaceColor',[0.86 0.93 1.00],'EdgeColor','none');
+      a.HitTest = 'off';
+      a.PickableParts = 'none';
+
+      p = plot(ax,x,y,'-o', ...
         'Color',primary, ...
         'LineWidth',1.8, ...
         'MarkerSize',4, ...
         'MarkerFaceColor',[1 1 1], ...
         'MarkerEdgeColor',primary);
+      rHand = dataTipTextRow('Hand #', x);
+      rBet = dataTipTextRow('Previous Bet', state.history.bet);
+      rBankroll = dataTipTextRow('Bankroll $', y);
+      rHand.Format = '%.0f';
+      rBet.Format = '%.0f';
+      rBankroll.Format = '%.0f';
+      p.DataTipTemplate.DataTipRows = [rHand rBet rBankroll];
       if state.stop.hit
-        scatter(ax,state.stop.handN,state.stop.bankroll,48,warn,'filled');
+        s = scatter(ax,state.stop.handN,state.stop.bankroll,48,warn,'filled');
+        rsHand = dataTipTextRow('Hand #', state.stop.handN);
+        rsBet = dataTipTextRow('Previous Bet', state.stop.nextBet);
+        rsBankroll = dataTipTextRow('Bankroll $', state.stop.bankroll);
+        rsHand.Format = '%.0f';
+        rsBet.Format = '%.0f';
+        rsBankroll.Format = '%.0f';
+        s.DataTipTemplate.DataTipRows = [rsHand rsBet rsBankroll];
       end
       xlim(ax,[1,max(10,numel(x))]);
       ylim(ax,[max(0,min(y)-50),max(y)+80]);

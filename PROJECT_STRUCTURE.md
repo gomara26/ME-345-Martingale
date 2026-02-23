@@ -3,7 +3,7 @@
 ## Top-level entrypoints
 - `bj_ui.m`: Interactive UI runner.
 - `bj_run_martingale_test.m`: Headless simulation runner with summary output.
-- `martingale_strategy_tester.m`: Alias wrapper for strategy testing.
+- `martingale_strategy_tester.m`: Alias wrapper for headless runs.
 - `bj_setup_paths.m`: Adds project subfolders to MATLAB path.
 
 ## Folders

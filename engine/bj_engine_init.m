@@ -34,5 +34,6 @@ state.stop.handN=[];
 state.stop.bankroll=[];
 state.stop.nextBet=[];
 state.stop.lossesInRow=[];
+state.stop.reason="";
 
 end

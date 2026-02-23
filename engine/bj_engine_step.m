@@ -10,8 +10,23 @@ if state.bankroll<bet
     state.stop.bankroll = state.bankroll;
     state.stop.nextBet = bet;
     state.stop.lossesInRow = state.currentLossStreak;
+    state.stop.reason = "BANKROLL";
     fprintf('STOP hit at hand %d: bankroll $%.0f below next bet $%.0f after %d consecutive losses.\n', ...
       state.stop.handN, state.stop.bankroll, state.stop.nextBet, state.stop.lossesInRow);
+  end
+  return
+end
+
+if isfield(props,'stopAtTableMax') && props.stopAtTableMax && bet>=props.tableMax
+  if ~state.stop.hit
+    state.stop.hit = true;
+    state.stop.handN = state.handN;
+    state.stop.bankroll = state.bankroll;
+    state.stop.nextBet = bet;
+    state.stop.lossesInRow = state.currentLossStreak;
+    state.stop.reason = "TABLE_MAX";
+    fprintf('STOP hit at hand %d: next bet reached table max ($%.0f).\n', ...
+      state.stop.handN, state.stop.nextBet);
   end
   return
 end

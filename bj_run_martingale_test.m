@@ -1,6 +1,6 @@
 function [state,summary] = bj_run_martingale_test(numHands,props)
 bj_setup_paths();
-% Run the blackjack martingale engine without UI for testing/automation.
+% Run the blackjack martingale engine without UI.
 if nargin < 1 || isempty(numHands)
   numHands = 1000;
 end
@@ -17,6 +17,11 @@ for k = 1:numHands
   bankrollBefore = state.bankroll;
   state = bj_engine_step(state);
 
+  % Stop early if engine stop condition was reached.
+  if state.stop.hit
+    break;
+  end
+
   % Stop early if bankroll can no longer cover the next required bet.
   if state.bankroll == bankrollBefore && state.bankroll < state.betNext
     break;
@@ -30,6 +35,7 @@ summary = struct();
 summary.handsPlayed = handsPlayed;
 summary.bankrollStart = props.bankroll0;
 summary.bankrollEnd = state.bankroll;
+summary.maxBankrollReached = max([props.bankroll0, state.history.bankroll]);
 summary.net = net;
 summary.roi = bj_safeDiv(net, props.bankroll0);
 summary.wins = state.wins;
@@ -38,6 +44,7 @@ summary.pushes = state.pushes;
 summary.winRateNoPush = bj_safeDiv(state.wins, state.wins + state.losses);
 summary.lossRateNoPush = bj_safeDiv(state.losses, state.wins + state.losses);
 summary.stoppedByBankroll = state.stop.hit || (handsPlayed < numHands);
+summary.stopReason = state.stop.reason;
 summary.stopLossesInRow = state.stop.lossesInRow;
 summary.maxLossStreak = state.maxLossStreak;
 end
@@ -64,6 +71,7 @@ props = struct( ...
   'dealerStandS17', true, ...
   'allowDouble', false, ...
   'reshufflePen', 0.25, ...
+  'stopAtTableMax', false, ...
   'seed', [] ...
 );
 end
