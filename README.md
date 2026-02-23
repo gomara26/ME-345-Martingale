@@ -5,10 +5,7 @@ MATLAB blackjack simulator with:
 - Headless test mode (`martingale_strategy_tester` / `bj_run_martingale_test`)
 
 ## 1. Open project
-In MATLAB:
-```matlab
-cd('...../MATLAB/ME 345 Project')
-```
+
 
 ## 2. Run UI
 ```matlab
