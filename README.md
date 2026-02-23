@@ -17,6 +17,7 @@ bj_ui
 
 The UI uses default martingale settings (`allowDouble = false`).
 Hands are shown as rank+suit card codes (example: `AS`, `10H`, `QC`).
+If `/Users/gavinomara/Documents/MATLAB/ME 345 Project/cards-svg` exists with matching names (for example `AS.svg`), the UI also renders card images.
 
 ## 3. Run headless tester (default params)
 ```matlab

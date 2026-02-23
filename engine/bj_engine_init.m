@@ -26,6 +26,8 @@ state.history.lossStreak=[];
 
 state.last.playerText="";
 state.last.dealerText="";
+state.last.playerCards=[];
+state.last.dealerCards=[];
 
 state.stop.hit=false;
 state.stop.handN=[];

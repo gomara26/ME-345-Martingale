@@ -108,10 +108,12 @@ state.history.pBustStreak(end+1)=pStreak;
 
 net=state.bankroll-bankrollBefore;
 
-state.last.playerText=sprintf("PLAYER\nCards %s\nFinal %s\nTotal %d\nDouble %s\nOutcome %s\nNet %+0.0f", ...
-  bj_handToString(player),bj_handToString(playerFinal),bj_handValue(playerFinal),bj_tfStr(didDouble),outcome,net);
+state.last.playerText=sprintf("PLAYER\nTotal %d\nDouble %s\nOutcome %s\nNet %+0.0f", ...
+  bj_handValue(playerFinal),bj_tfStr(didDouble),outcome,net);
 
-state.last.dealerText=sprintf("DEALER\nUpcard %s\nInitial %s\nFinal %s\nTotal %d", ...
-  bj_cardToString(dealerUp),bj_handToString(dealer),bj_handToString(dealerFinal),bj_handValue(dealerFinal));
+state.last.dealerText=sprintf("DEALER\nUpcard %s\nTotal %d", ...
+  bj_cardToString(dealerUp),bj_handValue(dealerFinal));
+state.last.playerCards=playerFinal;
+state.last.dealerCards=dealerFinal;
 
 end

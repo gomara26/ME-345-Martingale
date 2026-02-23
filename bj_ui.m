@@ -15,6 +15,8 @@ props = struct( ...
 );
 
 state = bj_engine_init(props);
+rootDir = fileparts(mfilename('fullpath'));
+cardsDir = fullfile(rootDir,'cards-svg');
 
 % Light modern palette
 bg = [0.95 0.96 0.98];
@@ -66,9 +68,14 @@ panelPlayer = uipanel(fig, ...
   'BorderType','line', ...
   'HighlightColor',[0.85 0.87 0.92], ...
   'Title','Player');
-txtPlayer = uitextarea(panelPlayer,'Position',[10 10 330 178],'Editable','off');
+playerCardPanel = uipanel(panelPlayer, ...
+  'Position',[10 92 330 98], ...
+  'BorderType','none', ...
+  'BackgroundColor',card);
+txtPlayer = uitextarea(panelPlayer,'Position',[10 10 330 78],'Editable','off');
 txtPlayer.FontName = 'Avenir Next';
-txtPlayer.FontSize = 15;
+txtPlayer.FontSize = 14;
+txtPlayer.BackgroundColor = card;
 
 panelDealer = uipanel(fig, ...
   'Position',[24 58 350 214], ...
@@ -76,9 +83,28 @@ panelDealer = uipanel(fig, ...
   'BorderType','line', ...
   'HighlightColor',[0.85 0.87 0.92], ...
   'Title','Dealer');
-txtDealer = uitextarea(panelDealer,'Position',[10 10 330 178],'Editable','off');
+dealerCardPanel = uipanel(panelDealer, ...
+  'Position',[10 92 330 98], ...
+  'BorderType','none', ...
+  'BackgroundColor',card);
+txtDealer = uitextarea(panelDealer,'Position',[10 10 330 78],'Editable','off');
 txtDealer.FontName = 'Avenir Next';
-txtDealer.FontSize = 15;
+txtDealer.FontSize = 14;
+txtDealer.BackgroundColor = card;
+
+maxCardSlots = 6;
+cardW = 48;
+cardH = 74;
+gap = 6;
+playerCardImgs = gobjects(1,maxCardSlots);
+dealerCardImgs = gobjects(1,maxCardSlots);
+for i = 1:maxCardSlots
+  x = 4 + (i-1)*(cardW+gap);
+  playerCardImgs(i) = uiimage(playerCardPanel,'Position',[x 12 cardW cardH],'Visible','off');
+  dealerCardImgs(i) = uiimage(dealerCardPanel,'Position',[x 12 cardW cardH],'Visible','off');
+end
+playerMore = uilabel(panelPlayer,'Position',[280 170 60 20],'FontSize',11,'FontColor',textSub,'HorizontalAlignment','right');
+dealerMore = uilabel(panelDealer,'Position',[280 170 60 20],'FontSize',11,'FontColor',textSub,'HorizontalAlignment','right');
 
 btnDeal = uibutton(fig,'push', ...
   'Text','Deal Next Hand', ...
@@ -164,9 +190,13 @@ render();
     if state.handN==0
       txtPlayer.Value="Waiting for first hand...";
       txtDealer.Value="Waiting for first hand...";
+      renderCards([],playerCardImgs,playerMore);
+      renderCards([],dealerCardImgs,dealerMore);
     else
       txtPlayer.Value=state.last.playerText;
       txtDealer.Value=state.last.dealerText;
+      renderCards(state.last.playerCards,playerCardImgs,playerMore);
+      renderCards(state.last.dealerCards,dealerCardImgs,dealerMore);
     end
 
     cla(ax);
@@ -188,6 +218,37 @@ render();
     else
       xlim(ax,[1 10]);
       ylim(ax,[max(0,state.bankroll-50),state.bankroll+80]);
+    end
+  end
+
+  function renderCards(cards,imgSlots,moreLbl)
+    n = numel(cards);
+    shown = min(n,numel(imgSlots));
+
+    for i = 1:numel(imgSlots)
+      imgSlots(i).Visible = 'off';
+      imgSlots(i).ImageSource = '';
+      imgSlots(i).Tooltip = '';
+    end
+
+    for i = 1:shown
+      code = string(bj_cardToString(cards(i)));
+      svgPath = fullfile(cardsDir, code + ".svg");
+      if exist(svgPath,'file')
+        try
+          imgSlots(i).ImageSource = svgPath;
+          imgSlots(i).Visible = 'on';
+          imgSlots(i).Tooltip = code;
+        catch
+          imgSlots(i).Visible = 'off';
+        end
+      end
+    end
+
+    if n > shown
+      moreLbl.Text = "+" + string(n-shown) + " more";
+    else
+      moreLbl.Text = "";
     end
   end
 end
