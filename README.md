@@ -7,7 +7,7 @@ MATLAB blackjack simulator with:
 ## 1. Open project
 In MATLAB:
 ```matlab
-cd('/Users/gavinomara/Documents/MATLAB/ME 345 Project')
+cd('...../MATLAB/ME 345 Project')
 ```
 
 ## 2. Run UI
