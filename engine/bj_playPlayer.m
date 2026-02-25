@@ -8,6 +8,7 @@ while true
 
   if tot>21, playerFinal=player; return; end
 
+  % Doubling is only available on first decision with enough bankroll.
   canDouble = bankroll>=bet && numel(player)==2;
   action=bj_basicAction_simple(tot,soft,dealerUp,props.allowDouble,canDouble);
 

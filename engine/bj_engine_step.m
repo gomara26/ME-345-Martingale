@@ -3,6 +3,7 @@ function state = bj_engine_step(state)
 props=state.props;
 bet=bj_clamp(state.betNext,props.tableMin,props.tableMax);
 
+% Hard stop when bankroll cannot fund the next hand.
 if state.bankroll<bet
   if ~state.stop.hit
     state.stop.hit = true;
@@ -17,6 +18,7 @@ if state.bankroll<bet
   return
 end
 
+% Optional stop when the martingale progression reaches table limit.
 if isfield(props,'stopAtTableMax') && props.stopAtTableMax && bet>=props.tableMax
   if ~state.stop.hit
     state.stop.hit = true;
@@ -42,6 +44,7 @@ state.handN=state.handN+1;
 bankrollBefore=state.bankroll;
 state.bankroll=state.bankroll-bet;
 
+% Deal opening two cards each and resolve hand flow.
 [state.shoe,p1]=bj_draw(state.shoe); [state.shoe,d1]=bj_draw(state.shoe);
 [state.shoe,p2]=bj_draw(state.shoe); [state.shoe,d2]=bj_draw(state.shoe);
 
@@ -98,6 +101,7 @@ end
 
 state.bankroll=state.bankroll+profit;
 
+% Track consecutive losses for risk/stop diagnostics.
 if outcome=="L"||outcome=="BJL"
   state.currentLossStreak = state.currentLossStreak + 1;
 else
@@ -105,6 +109,7 @@ else
 end
 state.maxLossStreak = max(state.maxLossStreak,state.currentLossStreak);
 
+% Martingale bet update: double after loss, reset after win, hold on push.
 if outcome=="L"||outcome=="BJL"
   state.betNext=min(bet*2,props.tableMax);
 elseif outcome=="W"||outcome=="BJW"

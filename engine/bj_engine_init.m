@@ -1,11 +1,13 @@
 function state = bj_engine_init(props)
 
+% Reproducible runs when seed is provided; randomize otherwise.
 if isfield(props,'seed') && ~isempty(props.seed)
   rng(props.seed);
 else
   rng('shuffle');
 end
 
+% Snapshot default run state consumed by UI and batch runner.
 state.props = props;
 state.bankroll = props.bankroll0;
 state.baseBet = bj_clamp(props.baseBet,props.tableMin,props.tableMax);

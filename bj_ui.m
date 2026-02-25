@@ -150,6 +150,7 @@ hold(ax,'on');
 
 render();
 
+  % Advance exactly one hand and refresh all UI surfaces.
   function step()
     state = bj_engine_step(state);
     render();
@@ -167,6 +168,7 @@ render();
     render();
   end
 
+  % Single render pass for labels, cards, controls, and chart.
   function render()
     [pLoss,maxLoss,pStreak] = bj_bust_streak_est(state);
 

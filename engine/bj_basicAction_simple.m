@@ -1,5 +1,6 @@
 function action=bj_basicAction_simple(total,soft,dealerUp,allowDouble,canDouble)
 
+% Approximate no-split basic strategy used by the simulator.
 if soft
   if total<=17, action="H"; return; end
   if total==18
